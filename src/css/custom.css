@@ -1,0 +1,50 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #71aa34;
+  --ifm-color-primary-dark: #65992f;
+  --ifm-color-primary-darker: #5f902c;
+  --ifm-color-primary-darkest: #4e7624;
+  --ifm-color-primary-light: #7dbb39;
+  --ifm-color-primary-lighter: #84c03f;
+  --ifm-color-primary-lightest: #97cc57;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  --ifm-background-color: #f8f9fa;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #f8edcd;
+  
+  /* Data Nadhi brand colors */
+  --nadhi-tan: #c2b280;
+  --nadhi-green: #71aa34;
+  --nadhi-blue: #5abcd8;
+  --nadhi-cream: #f8edcd;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+[data-theme='dark'] {
+  --ifm-color-primary: #7dbb39;
+  --ifm-color-primary-dark: #71aa34;
+  --ifm-color-primary-darker: #65992f;
+  --ifm-color-primary-darkest: #5f902c;
+  --ifm-color-primary-light: #84c03f;
+  --ifm-color-primary-lighter: #97cc57;
+  --ifm-color-primary-lightest: #a8d46e;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-background-color: #1a1a1a;
+  --ifm-navbar-background-color: #242424;
+  --ifm-footer-background-color: #2a2a2a;
+}
+
+/* Nadhi gradient text utility */
+.nadhi-gradient-text {
+  background: linear-gradient(135deg, #c2b280 0%, #71aa34 50%, #5abcd8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

@@ -1,0 +1,39 @@
+{
+  "tutorialSidebar": [
+    "index",
+    {
+      "type": "category",
+      "label": "Architecture",
+      "items": [
+        {
+          "type": "category",
+          "label": "EchoPost",
+          "link": {
+            "type": "doc",
+            "id": "architecture/echopost/index"
+          },
+          "items": [
+            "architecture/echopost/design-decisions",
+            "architecture/echopost/data-usage-and-operations",
+            "architecture/echopost/error-handling"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Python Logging SDK",
+          "link": {
+            "type": "doc",
+            "id": "architecture/sdk-python/index"
+          },
+          "items": [
+            "architecture/sdk-python/rules-and-config",
+            "architecture/sdk-python/echopost-integration",
+            "architecture/sdk-python/delivery-strategy",
+            "architecture/sdk-python/async-processing",
+            "architecture/sdk-python/error-handling"
+          ]
+        }
+      ]
+    }
+  ]
+}

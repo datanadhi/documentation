@@ -1,0 +1,8 @@
+# Cloudflare Pages SPA redirect rules for Docusaurus
+# This ensures all routes work correctly with client-side routing
+
+# Redirect www to non-www (optional, uncomment if needed)
+# https://www.docs.datanad.com/* https://docs.datanad.com/:splat 301!
+
+# Handle 404 - SPA fallback
+/* /index.html 200

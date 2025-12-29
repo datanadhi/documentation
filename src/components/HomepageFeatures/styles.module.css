@@ -1,0 +1,116 @@
+.features {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.featureRow {
+  margin-bottom: 0;
+  align-items: center;
+  padding: 3rem 0;
+  position: relative;
+}
+
+.featureRow.direct {
+  background: linear-gradient(to right, rgba(90, 188, 216, 0.15), transparent 50%);
+}
+
+.featureRow.transform {
+  background: linear-gradient(to left, rgba(113, 170, 52, 0.15), transparent 50%);
+}
+
+.featureRow.deliver {
+  background: linear-gradient(to right, rgba(194, 178, 128, 0.15), transparent 50%);
+}
+
+.imageContainer,
+.headingContainer,
+.descriptionContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  height: 100%;
+  padding: 1rem;
+}
+
+.headingContainer h3 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.featureRow.direct .headingContainer h3 {
+  color: #5abcd8;
+}
+
+.featureRow.transform .headingContainer h3 {
+  color: #71aa34;
+}
+
+.featureRow.deliver .headingContainer h3 {
+  color: #c2b280;
+}
+
+.featureSvg {
+  height: 150px;
+  width: auto;
+  max-width: 100%;
+}
+
+.shortDescription {
+  color: var(--ifm-color-emphasis-600);
+  margin-top: 0.5rem;
+  font-size: 1.3rem;
+}
+
+/* Mobile styles */
+@media (max-width: 996px) {
+  .featureRow {
+    padding: 2rem 0;
+  }
+
+  .featureSvg {
+    height: 200px;
+  }
+
+  .headingContainer h3 {
+    font-size: 1.5rem;
+  }
+
+  /* On mobile, always show image first, then heading, then description */
+  .featureRow .row {
+    flex-direction: column;
+  }
+
+  .featureRow .col {
+    max-width: 100%;
+    margin-bottom: 1rem;
+  }
+
+  /* Default order for Direct and Deliver (icon, heading, description) */
+  .imageCol {
+    order: 1;
+  }
+
+  .headingCol {
+    order: 2;
+  }
+
+  .descriptionCol {
+    order: 3;
+  }
+
+  /* Mobile gradients - top to bottom instead of left to right */
+  .featureRow.direct {
+    background: linear-gradient(to bottom, rgba(90, 188, 216, 0.15), transparent 40%);
+  }
+
+  .featureRow.transform {
+    background: linear-gradient(to bottom, rgba(113, 170, 52, 0.15), transparent 40%);
+  }
+
+  .featureRow.deliver {
+    background: linear-gradient(to bottom, rgba(194, 178, 128, 0.15), transparent 40%);
+  }
+}

@@ -1,0 +1,107 @@
+/**
+ * CSS files with the .module.css suffix will be treated as CSS modules
+ * and scoped locally.
+ */
+
+/* Light theme (default) */
+.heroBanner {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 40%, #f8edcd 100%);
+}
+
+.heroIcon {
+  width: 250px;
+  height: 250px;
+  margin-bottom: 3rem;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.heroIcon:hover {
+  transform: scale(1.05);
+}
+
+.heroTitle {
+  font-size: 6rem;
+  font-weight: 700;
+  margin: 0 0 1.5rem 0;
+  background: linear-gradient(135deg, #c2b280 0%, #71aa34 50%, #5abcd8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSlogan {
+  font-size: 2rem;
+  font-weight: 500;
+  margin: 0 0 2rem 0;
+  letter-spacing: 0.5px;
+}
+
+.sloganDirect {
+  color: #5abcd8;
+}
+
+.sloganTransform {
+  color: #71aa34;
+}
+
+.sloganDeliver {
+  color: #c2b280;
+}
+
+/* Dark theme overrides */
+[data-theme='dark'] .heroBanner {
+  background: linear-gradient(135deg, #1a1a1a 40%, #2a2520 100%);
+}
+
+[data-theme='dark'] .heroIcon {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+}
+
+[data-theme='dark'] .sloganDirect {
+  color: #7dd3ed;
+}
+
+[data-theme='dark'] .sloganTransform {
+  color: #8dc653;
+}
+
+[data-theme='dark'] .sloganDeliver {
+  color: #d4c499;
+}
+
+@media screen and (max-width: 768px) {
+  .heroBanner {
+    padding: 2rem;
+    min-height: 80vh;
+  }
+  
+  .heroTitle {
+    font-size: 2.5rem;
+  }
+  
+  .heroSlogan {
+    font-size: 1.2rem;
+  }
+  
+  .heroIcon {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}

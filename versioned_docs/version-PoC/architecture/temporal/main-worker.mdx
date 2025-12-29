@@ -1,0 +1,81 @@
+import Diagram from "../../diagrams/main-temporal-worker.md"
+
+# Main Temporal Workflow
+
+The **MainWorkflow** in Data Nadhi handles the first phase of pipeline execution.  
+It fetches pipeline and workflow configs and then triggers the **TransformationWorkflow**.
+
+**[Github Repository]**: [data-nadhi-temporal-worker](https://github.com/Data-ARENA-Space/data-nadhi-temporal-worker)
+
+---
+
+## Overview
+
+The workflow listens to Temporal's **task queue** and starts whenever a new log or event shows up.  
+It validates required metadata like `organisationId`, `projectId`, and `pipelineId` before moving forward.
+
+<Diagram />
+
+---
+
+## Workflow Steps
+
+### 1. Receive Input
+Input payload has:
+- **Metadata**: org, project, pipeline, message IDs  
+- **Log Data**: the event or log to process
+
+---
+
+### 2. Fetch Pipeline Configuration
+Activity: `fetch_pipeline_config`  
+
+**What it does:**
+- Gets pipeline config from MongoDB  
+- Validates that the pipeline exists and has a `startNodeId`  
+
+If invalid, a failure gets logged to **MinIO** and the workflow exits.
+
+---
+
+### 3. Fetch Workflow Configuration
+Activity: `fetch_workflow_config`  
+
+**What it does:**
+- Builds workflow from pipeline nodes  
+- Validates the workflow  
+- Pushes workflow to **`task-q-transform`** queue  
+
+If workflow creation fails, a failure gets logged to **MinIO** and the workflow exits.
+
+---
+
+### 4. Trigger Transformation Workflow
+- Starts **child workflow** `TransformationWorkflow`  
+- Assigned to **`task-q-transform`** queue  
+- Each run gets identified by appending `-transform` to the parent workflow ID
+
+---
+
+## Failure Handling with MinIO
+
+All workflow or activity failures get logged to **MinIO** for traceability.  
+The failure logs include:
+- Exception type and message  
+- Stack trace  
+- Original and current input  
+- Org, project, pipeline, and message IDs
+
+---
+
+## Summary
+
+The **MainWorkflow** in Data Nadhi handles the first phase of log processing:  
+
+- Validates incoming logs and required metadata (`organisationId`, `projectId`, `pipelineId`).  
+- Fetches pipeline and workflow configs from MongoDB.  
+- Pushes workflows to the **task-q-transform** queue.  
+- Triggers the **TransformationWorkflow** for node-level processing.  
+- Logs failures to **MinIO** for traceability.  
+
+This gives you **reliable orchestration, low-latency validation, and solid failure handling** before transformation begins.

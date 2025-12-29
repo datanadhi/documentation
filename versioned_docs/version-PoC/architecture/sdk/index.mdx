@@ -1,0 +1,99 @@
+import Diagram from "../../diagrams/sdk.md"
+
+# SDK Architecture
+
+The Data Nadhi SDK gives you client libraries that capture logs from your app and send them to the Data Nadhi Server when needed.  
+It's designed to work smoothly with whatever logging system your language already has, while adding pipeline-based log routing.
+
+**[Github Repository]**: [data-nadhi-sdk](https://github.com/Data-ARENA-Space/data-nadhi-sdk)
+
+---
+
+## Overview
+
+<Diagram />
+
+---
+
+## Core Components
+
+### Logger Utility
+- Uses the **default logging module** in each language - no custom framework needed.
+- Can be used on its own — even without triggering any pipelines.
+- When pipelines aren't active, logs go to **stdout** just like normal logs.
+- Makes sure that integrating Data Nadhi doesn't mess with your existing logging setup.
+
+### Log Config
+- The log config lets you set **conditions** on nested JSON fields.
+- Gives you **rule-based control** over whether a log should go to stdout or get sent to pipelines.
+- Supports **multiple pipelines per rule**.
+- Has logical **AND / OR** operators for flexible filtering.
+- For the full schema and examples, check out [Log Config details](/docs/architecture/sdk/log-config).
+
+### API Key
+- Required if you want to send logs to Data Nadhi pipelines.
+- You can set it as an environment variable:  
+  ```bash
+  export DATA_NADHI_API_KEY=<your_api_key>
+  ```
+- You can also pass it when initializing the Logger (not recommended except for testing).
+
+### Formatter
+- The default formatter is JSON.
+- You can define custom formatters — since it's built on native logging, all the usual formatting options work.
+- If something goes wrong, it falls back to the default formatter to avoid crashing during logging.
+
+### Log Builder
+- Creates a standardized structured payload before sending logs to the server.
+- Captures consistent metadata for each log, including `timestamp`, `file info`, `function name`, and `trace ID`.
+- This payload is internal to Data Nadhi and might differ from what the formatter shows in stdout.
+- For a detailed breakdown of all the fields, see [Log Structure](/docs/architecture/sdk/log-structure)
+
+---
+
+## Architecture Flow
+The SDK works in three main stages:
+1. Initialization (on application load)
+    - Initializes the logger.
+    - Loads the log config from YAML.
+    - Converts it into a structure that can be traversed.
+    - Grabs the API key from the environment (or uses the one you passed).
+    - Sets the formatter (your custom one or the default).
+2. Logging (when logs are emitted)
+    - Generates the log data.
+    - Checks if the log passes your defined rules.
+    - If stdout is enabled, prints the log locally.
+    - If pipelines are configured, sends the log asynchronously to the Data Nadhi Server using your API key.
+3. Response Handling
+    - When it gets a response, the SDK checks for any log_datanadhi_errors.
+    - If it finds errors, they get logged to stdout using your configured formatter.
+    - All server interaction happens asynchronously, so there's zero blocking on your main application thread.
+
+---
+
+## Error Handling
+- Failed requests or timeouts get logged to stdout (if you have that enabled).
+- Invalid API keys or messed up log configs will raise descriptive errors during initialization.
+- Network issues won't interrupt your main application — the SDK safely falls back to local logging.
+
+---
+
+## Supported Languages
+### Python SDK
+- **Repository:** [data-nadhi-sdk](https://github.com/Data-ARENA-Space/data-nadhi-sdk)
+- Uses threading for asynchronous log sending to the server.
+
+---
+
+## Extending the SDK
+If you want to implement the SDK in other languages:
+- Follow the same **initialization → log traversal → async send pattern**.
+- Use the same **log config schema** and **API key validation** logic.
+- Keep **stdout fallback** as the default mode.
+- Make sure log sending is async or non-blocking.
+Use the [Python SDK](https://github.com/Data-ARENA-Space/data-nadhi-sdk) as a reference implementation.
+
+---
+
+**In short:**
+The Data Nadhi SDK is a lightweight, non-intrusive logging layer that integrates easily, works reliably whether you're online or offline, and makes sure your data flows through the right pipelines — without slowing down your app.

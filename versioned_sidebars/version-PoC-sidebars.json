@@ -1,0 +1,66 @@
+{
+  "tutorialSidebar": [
+    "index",
+    {
+      "type": "category",
+      "label": "Architecture",
+      "link": {
+        "type": "doc",
+        "id": "architecture/index"
+      },
+      "items": [
+        {
+          "type": "category",
+          "label": "Data",
+          "link": {
+            "type": "doc",
+            "id": "architecture/data/index"
+          },
+          "items": [
+            "architecture/data/mongo",
+            "architecture/data/redis",
+            "architecture/data/minio"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "SDK",
+          "link": {
+            "type": "doc",
+            "id": "architecture/sdk/index"
+          },
+          "items": [
+            "architecture/sdk/log-structure",
+            "architecture/sdk/log-config"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Server",
+          "link": {
+            "type": "doc",
+            "id": "architecture/server/index"
+          },
+          "items": [
+            "architecture/server/api-key"
+          ]
+        },
+        {
+          "type": "category",
+          "label": "Temporal",
+          "link": {
+            "type": "doc",
+            "id": "architecture/temporal/index"
+          },
+          "items": [
+            "architecture/temporal/main-worker",
+            "architecture/temporal/transformation-worker",
+            "architecture/temporal/destination-worker"
+          ]
+        }
+      ]
+    },
+    "setup",
+    "internal-server-apis"
+  ]
+}

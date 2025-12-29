@@ -1,0 +1,115 @@
+import Diagram from "../../diagrams/server.md"
+
+# Server Architecture
+
+The **Data Nadhi Server** is the main entry point for all logs and events sent from SDKs.  
+It validates, enriches, and routes log data into your configured pipelines using **Temporal** for async processing.  
+The system is built to be **stateless**, **heavily cached**, and **fault-tolerant**.
+
+**[Github Repository]**: [data-nadhi-server](https://github.com/Data-ARENA-Space/data-nadhi-server)
+
+---
+
+## Overview
+<Diagram />
+
+---
+
+## Core Responsibilities
+
+- Authenticate SDK requests using org-level secrets.  
+- Fetch and validate project and pipeline configs.  
+- Use **extensive caching** to minimize MongoDB queries.  
+- Enqueue data into **Temporal workflows** for async processing.  
+- Give structured responses for synchronous validation.  
+- Push async workflow failures into **MinIO** for post-processing and debugging.
+
+---
+
+## Extensive Use of Caching
+
+Caching is a huge part of the server architecture.  
+Almost every data access path — like fetching org secrets, project configs, or pipeline definitions — gets served from cache first.
+
+When there's a cache miss:
+1. The data gets fetched from **MongoDB**.  
+2. Decrypted or transformed if needed.  
+3. **Written back to the cache** with a defined TTL.  
+
+This read-through and write-back pattern makes sure:
+- Database calls are minimal.  
+- Secrets and configs are instantly accessible.  
+- Server latency stays consistently low, even under high load.
+
+**In short:**  
+Every piece of reusable data flows through the cache before hitting the database.
+
+---
+
+## Request Processing Flow
+
+The processing is divided into two main parts — **Sync Flow** (validation and acknowledgment) and **Async Flow** (background processing via Temporal).
+
+### **Sync Flow**
+1. **Validate API Key** — Extract and verify org secret. See [API Key Management](/docs/architecture/server/api-key) for more info
+2. **Attach Identifiers** — Add `org_id` and `project_id` to the request.  
+3. **Fetch Pipeline Config** — Resolve using `pipelineCode`, `org_id`, and `project_id` from cache or Mongo.  
+4. **Validate Pipeline**
+   - Return **401** if API key is invalid.  
+   - Return **400** if payload or pipelineCode is missing.  
+   - Return **404** if pipeline isn't found.  
+   - Return **400** if pipeline is inactive.  
+   - Return **500** if any unexpected internal error happens.  
+5. **Generate Message ID** — On success, send back `200 OK`.
+
+---
+
+### **Async Flow**
+1. **Generate Metadata** — Create structured log metadata for processing.  
+2. **Generate Workflow ID** — Create a unique ID for each pipeline execution.  
+3. **Resolve Processor ID** — Pick the Temporal task queue ID based on priority:  
+```
+pipeline-level > project-level > org-level > default
+```
+4. **Push to Temporal Queue** — Enqueue workflow execution into Temporal for downstream processing.
+
+---
+
+## Exception Handling
+
+The server uses a two-tiered error handling approach:
+
+### **Synchronous Errors**
+- These happen during validation or metadata generation (before handing off to Temporal).
+- The SDK immediately gets an error response (e.g., `401`, `400`, `404`, `500`).
+- No retry at this stage.
+
+### **Asynchronous Errors**
+- Once the workflow is handed off to Temporal, the SDK isn't involved anymore.
+- Any failures during async processing (like destination connection errors, transformation issues) get captured and logged to **MinIO**.
+- These logs are used later for debugging and analysis.
+
+---
+
+## Data Access and Structure
+
+Data is accessed through well-defined keys that uniquely represent each resource:
+
+| Purpose | Key Format |
+|----------|-------------|
+| Organisation Secret | `datanadhiserver:org:<orgId>:secret` |
+| Pipeline By `pipelineCode` | `datanadhiserver:org:<orgId>:prj:<projectId>:plc:<pipelineCode>` |
+| API Key validation metadata | `datanadhiserver:apikey:<apiKey>` |
+
+---
+
+## Summary
+
+The **Data Nadhi Server** works as a secure, high-performance orchestrator between SDKs and the Temporal processing engine.  
+It achieves **speed and reliability** by:
+- Doing **all reads/writes through cache**.  
+- Validating everything synchronously before workflow execution.  
+- Offloading heavy processing to Temporal.  
+- Safely handling async failures through **MinIO**.
+
+This design gives you consistent behavior, low latency, and solid failure isolation across all log ingestion workflows.

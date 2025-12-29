@@ -1,0 +1,183 @@
+import DrawioEmbed from '@site/src/components/DrawioEmbed';
+
+# SDK Architecture
+
+## Overview
+
+This document provides a **high-level view** of how the Data Nadhi SDK is structured, how logs flow through the system, and why the design decisions are the way they are.
+
+The SDK is the **entry point** for logs from a user’s application into the Data Nadhi pipeline.  
+Its primary responsibility is to **capture logs safely**, **decide where they should go**, and **deliver them without blocking the application**.
+
+The SDK is intentionally minimal, conservative, and predictable.
+
+<DrawioEmbed
+  file="documentation/architecture/highlevel/sdk.drawio"
+  ref="main"
+/>
+
+---
+
+## Execution and Isolation Model
+
+The SDK is strictly isolated at the Data Nadhi directory level.
+
+A single Data Nadhi directory represents one independent execution context.
+
+Configuration, rules, async processors, EchoPost instances, queues, workers,
+health monitors, and on-disk state are all scoped to this directory.
+
+Nothing inside the SDK is treated as process-global.
+
+This allows multiple independent logging pipelines to coexist safely within
+the same process, container, or host without interfering with each other.
+
+Failures, backpressure, and recovery in one directory do not affect others.
+
+---
+
+## Role of the SDK
+
+At a high level, the SDK:
+
+- Behaves like Python’s standard `logging` module
+- Produces structured log payloads
+- Evaluates routing rules
+- Sends logs to pipelines asynchronously
+- Handles server unavailability automatically
+- Avoids blocking user code at all costs
+
+The SDK does not assume high availability of servers and is designed to degrade gracefully.
+
+---
+
+## Logger class
+
+The SDK exposes a `Logger` class that provides standard logging methods with Data Nadhi integration.
+
+### Initialization
+
+```python
+from datanadhi import Logger
+
+logger = Logger(
+    module_name="my_app",           # Optional: module identifier
+    handlers=[...],                  # Optional: custom handlers
+    datanadhi_dir=".datanadhi",     # Optional: config directory
+    log_level=20,                    # Optional: logging level override
+    stack_level=2,                   # Optional: stack level for caller info
+    skip_stack=4,                    # Optional: frames to skip
+    echopost_disable=False          # Optional: disable EchoPost
+)
+```
+
+### Logging methods
+
+All methods support the same parameters:
+
+- **message** (str): The log message
+- **context** (dict): Additional structured data
+- **trace_id** (str): Optional trace ID for request tracking
+- **exc_info** (bool): Include exception information
+- **stack_info** (bool): Include stack trace
+- **stacklevel** (int): Override stack level for caller detection
+- **\*\*kwargs**: Additional context fields (merged into context)
+
+Methods:
+- `logger.debug(message, context={}, ...)`
+- `logger.info(message, context={}, ...)`
+- `logger.warning(message, context={}, ...)`
+- `logger.error(message, context={}, ...)`
+- `logger.critical(message, context={}, ...)`
+- `logger.exception(message, context={}, ...)` - Automatically captures exception with traceback
+
+All methods return the internal payload dict if rules are set, or None otherwise.
+
+### Trace ID management
+
+Trace IDs are managed using context variables:
+- If no trace_id is provided, a UUID is generated automatically
+- Once set, the trace_id persists for the current execution context
+- Can be explicitly set via the `trace_id` parameter
+- Internal SDK logs use `datanadhi-internal-{module_name}` as trace_id
+
+---
+
+## Structured logging model
+
+Every log that is evaluated against rules is converted into a **structured internal payload**.  
+This payload is the unit of routing, delivery, buffering, and persistence.
+
+### Internal payload keys
+
+Each payload contains the following top-level fields:
+
+| Key | Description |
+|----|------------|
+| `message` | Original log message |
+| `trace_id` | Unique identifier for the execution or request |
+| `timestamp` | UTC timestamp (ISO 8601) |
+| `module_name` | Module name provided to the logger |
+| `log_record` | Source code metadata |
+| `context` | User-provided structured context |
+
+### `log_record` fields
+
+| Key | Description |
+|---|---|
+| `filename` | Absolute path of source file |
+| `function_name` | Calling function |
+| `line_number` | Line number |
+| `level` | Log level |
+| `module_name` | Python module name |
+
+The SDK never mutates user-provided context silently.
+
+---
+
+## Non-blocking guarantee
+
+Logging calls **never block application execution**.
+
+Once rules are evaluated:
+- Logs are enqueued internally
+- Delivery happens in background threads
+- Logging returns immediately
+
+This guarantees predictable latency.
+
+---
+
+## Documentation structure
+
+- **Rules & Configuration**  
+  Configuration keys, YAML structure, and resolution model  
+  → [Rules and Configuration](./rules-and-config.md)
+
+- **Async Processing**  
+  Queue-based processing, workers, and backpressure  
+  → [Async Processing](./async-processing.md)
+
+- **Delivery Strategy**  
+  Primary server, EchoPost, fallback server, drain worker, and health monitoring  
+  → [Delivery Strategy](./delivery-strategy.md)
+
+- **EchoPost Integration**  
+  Binary management, startup, and communication model  
+  → [EchoPost Integration](./echopost-integration.md)
+
+- **Error Handling**  
+  How SDK errors are surfaced to user logging  
+  → [Error Handling](./error-handling.md)
+
+---
+
+## Design principles
+
+- Logging must never block user code
+- Failure must be explicit
+- Recovery should be automatic
+- Data loss is a last resort
+- Simplicity over flexibility
+
+The SDK is intentionally boring by design.
