@@ -26,7 +26,7 @@ Data Nadhi is made up of multiple services that can be deployed independently. T
 - If something fails, the SDK logs the error (if you have that enabled) after getting a failure response from the server.
 - **Available SDKs:**
   - [Python SDK](https://github.com/Data-ARENA-Space/data-nadhi-sdk/)
-- [Detailed SDK Architecture →](/docs/architecture/sdk)
+- [Detailed SDK Architecture →](/docs/PoC/architecture/sdk)
 
 ---
 
@@ -37,7 +37,7 @@ Data Nadhi is made up of multiple services that can be deployed independently. T
   - Checks if the pipeline you want is actually active
   - Pushes log events to Temporal's `task-q` queue
 - [Repository](https://github.com/Data-ARENA-Space/data-nadhi-server/)  
-- [Detailed Server Architecture →](/docs/architecture/server)
+- [Detailed Server Architecture →](/docs/PoC/architecture/server)
 
 ---
 
@@ -45,7 +45,7 @@ Data Nadhi is made up of multiple services that can be deployed independently. T
 - Grabs the workflow config for each pipeline and sets it up in a way that can be traversed.
 - Figures out which node to start from and pushes tasks to Temporal's `task-q-transform`.
 - [Repository](https://github.com/Data-ARENA-Space/data-nadhi-temporal-worker/)  
-- [Detailed Overview →](/docs/architecture/temporal/main-worker)
+- [Detailed Overview →](/docs/PoC/architecture/temporal/main-worker)
 
 ---
 
@@ -56,7 +56,7 @@ Data Nadhi is made up of multiple services that can be deployed independently. T
   - `conditional-branch` nodes for routing
   - `end` nodes for pushing the transformed data to Temporal's `task-q-destination`.
 - [Repository](https://github.com/Data-ARENA-Space/data-nadhi-temporal-worker/)  
-- [Detailed Overview →](/docs/architecture/temporal/transformation-worker)
+- [Detailed Overview →](/docs/PoC/architecture/temporal/transformation-worker)
 
 ---
 
@@ -65,7 +65,7 @@ Data Nadhi is made up of multiple services that can be deployed independently. T
 - Picks the right **destination sender engine** for the job.
 - Sends your processed data to wherever it needs to go (databases, APIs, etc.).
 - [Repository](https://github.com/Data-ARENA-Space/data-nadhi-temporal-worker/)  
-- [Detailed Overview →](/docs/architecture/temporal/destination-worker)
+- [Detailed Overview →](/docs/PoC/architecture/temporal/destination-worker)
 
 ---
 

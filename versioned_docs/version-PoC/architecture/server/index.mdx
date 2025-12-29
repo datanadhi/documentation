@@ -51,7 +51,7 @@ Every piece of reusable data flows through the cache before hitting the database
 The processing is divided into two main parts — **Sync Flow** (validation and acknowledgment) and **Async Flow** (background processing via Temporal).
 
 ### **Sync Flow**
-1. **Validate API Key** — Extract and verify org secret. See [API Key Management](/docs/architecture/server/api-key) for more info
+1. **Validate API Key** — Extract and verify org secret. See [API Key Management](/docs/PoC/architecture/server/api-key) for more info
 2. **Attach Identifiers** — Add `org_id` and `project_id` to the request.  
 3. **Fetch Pipeline Config** — Resolve using `pipelineCode`, `org_id`, and `project_id` from cache or Mongo.  
 4. **Validate Pipeline**

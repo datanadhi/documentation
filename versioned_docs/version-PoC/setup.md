@@ -121,7 +121,7 @@ A shared Docker network is created so that all our services and containers can c
     ```bash
     npm run dev
     ```
-4. Refer to [Internal Server APIs](/docs/internal-server-apis) on how to add data to Mongo for you to start using the server
+4. Refer to [Internal Server APIs](/docs/PoC/internal-server-apis) on how to add data to Mongo for you to start using the server
 
 **What is acheived?**
 - Your database has the required data to start testing the setup.
@@ -230,7 +230,7 @@ A shared Docker network is created so that all our services and containers can c
     DATA_NADHI_SERVER_HOST=http://localhost
     ```
     - If your service runs inside the same Docker network, remove the `DATA_NADHI_SERVER_HOST` variable.
-3. Add Log config file in `.datanadhi` folder - See [Log Config](/docs/architecture/sdk/log-config)
+3. Add Log config file in `.datanadhi` folder - See [Log Config](/docs/PoC/architecture/sdk/log-config)
 4. Try logging
     ```python
     from dotenv import load_dotenv

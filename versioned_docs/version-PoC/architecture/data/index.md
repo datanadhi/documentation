@@ -14,13 +14,13 @@ Since we don't store raw log data permanently, we need way less storage than tra
 - Went with MongoDB because it's **schemaless** - gives us flexibility since we don't know the exact schema upfront in some entities.  
 - Most of the time we're doing **single-row reads** using indexed fields.  
 - Makes it easy to grab the core metadata we need quickly.
-- More details here: [Mongo DB for Data Nadhi](/docs/architecture/data/mongo)
+- More details here: [Mongo DB for Data Nadhi](/docs/PoC/architecture/data/mongo)
 
 ### Redis Cache
 - Used to **cache data at each stage** of the pipeline so things run near real-time.  
 - Redis is solid for fast, temporary storage.  
 - If the cache fails, the system keeps running fine - you just might get some cache misses. 
-- More details here: [Redis in Data Nadhi](/docs/architecture/data/redis)
+- More details here: [Redis in Data Nadhi](/docs/PoC/architecture/data/redis)
 
 ### Postgres 
 - Not yet in use
@@ -34,7 +34,7 @@ Since we don't store raw log data permanently, we need way less storage than tra
 ### MinIO
 - Stores **failed records** until you do something about them.  
 - Picked MinIO because it's **compatible with Amazon S3** - makes migrating later way easier if needed. 
-- More details here: [MinIO in Data Nadhi](/docs/architecture/data/minio)
+- More details here: [MinIO in Data Nadhi](/docs/PoC/architecture/data/minio)
 
 ---
 

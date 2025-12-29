@@ -25,25 +25,25 @@ We use Temporal in Data Nadhi because it solves key challenges in workflow orche
 - Receives incoming log data.  
 - Validates the API key and figures out the org and project.  
 - Pushes tasks into Temporal's `task-q` queue for processing.  
-- See [Server](/docs/architecture/server) for more info
+- See [Server](/docs/PoC/architecture/server) for more info
 
 ### 2. **Data Nadhi Main Worker**
 - Gets the workflow config for each pipeline.  
 - Prepares a traversable workflow structure and finds the **start node**.  
 - Pushes tasks into Temporal's `task-q-transform` queue for transformation.  
-- See [Main Worker](/docs/architecture/temporal/main-worker) for more info
+- See [Main Worker](/docs/PoC/architecture/temporal/main-worker) for more info
 
 ### 3. **Data Nadhi Transformation Worker**
 - Processes tasks from `task-q-transform`.  
 - Applies **transformations**, **filters**, and **branching logic** based on the workflow.  
 - Pushes transformed data into Temporal's `task-q-destination` queue. 
-- See [Transformation Worker](/docs/architecture/temporal/transformation-worker) for more info 
+- See [Transformation Worker](/docs/PoC/architecture/temporal/transformation-worker) for more info
 
 ### 4. **Data Nadhi Destination Worker**
 - Gets tasks from `task-q-destination`.  
 - Fetches the **destination and connector config**.  
 - Sends processed data to the configured target (databases, APIs, etc.).
-- See [Destination Worker](/docs/architecture/temporal/destination-worker) for more info
+- See [Destination Worker](/docs/PoC/architecture/temporal/destination-worker) for more info
 
 ---
 
